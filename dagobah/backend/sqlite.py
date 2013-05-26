@@ -6,9 +6,9 @@ from datetime import datetime
 import sqlalchemy
 
 from dagobah.backend.base import BaseBackend
-
-TRUNCATE_LOG_SIZES_CHAR = {'stdout': 500000,
-                           'stderr': 500000}
+from dagobah.backend.sqlite_models import (Base, Dagobah, DagobahJob,
+                                           DagobahTask, DagobahDependency,
+                                           DagobahLog, DagobahLogTask)
 
 
 class SQLiteBackend(BaseBackend):
@@ -23,6 +23,12 @@ class SQLiteBackend(BaseBackend):
                                                      os.path.dirname(__file__)))
             self.filepath = os.path.join(location, 'dagobah.db')
 
+        self.engine = sqlalchemy.create_engine('sqlite:///' + self.filepath)
+        self.Session = sqlalchemy.orm.sessionmaker(bind=self.engine)
+        self.session = self.Session()
+
+        Base.metadata.create_all(self.engine)
+
 
     def __repr__(self):
         return '<SQLiteBackend (path: %s)>' % (self.filepath)
@@ -30,34 +36,29 @@ class SQLiteBackend(BaseBackend):
 
     def get_known_dagobah_ids(self):
         results = []
-        for rec in self.dagobah_coll.find():
-            results.append(rec['_id'])
+        for rec in self.session.query(Dagobah).all():
+            results.append(rec.id)
         return results
 
 
     def get_new_dagobah_id(self):
-        while True:
-            candidate = ObjectId()
-            if not self.dagobah_coll.find_one({'_id': candidate}):
-                return candidate
+        return max(self.session.query(sqlalchemy.func.max(Dagobah.id)) + 1, 1)
 
 
     def get_new_job_id(self):
-        while True:
-            candidate = ObjectId()
-            if not self.job_coll.find_one({'_id': candidate}):
-                return candidate
+        return max(self.session.query(sqlalchemy.func.max(DagobahJob.id)) + 1,
+                   1)
 
 
     def get_new_log_id(self):
-        while True:
-            candidate = ObjectId()
-            if not self.log_coll.find_one({'_id': candidate}):
-                return candidate
+        return max(self.session.query(sqlalchemy.func.max(DagobahLog.id)) + 1,
+                   1)
 
 
     def get_dagobah_json(self, dagobah_id):
-        return self.dagobah_coll.find_one({'_id': dagobah_id})
+        self.session.query(Dagobah).\
+            filter_by(id=dagobah_id).\
+            one().json
 
 
     def commit_dagobah(self, dagobah_json):
