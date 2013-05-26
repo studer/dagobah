@@ -9,6 +9,7 @@ import yaml
 from dagobah.core import Dagobah, EventHandler
 from dagobah.email import get_email_handler
 from dagobah.backend.base import BaseBackend
+from dagobah.backend.sqlite import SQLiteBackend
 from dagobah.backend.mongo import MongoBackend
 
 app = Flask(__name__)
@@ -106,14 +107,18 @@ def get_backend(config):
     if backend_string.lower() == 'none':
         return BaseBackend()
 
-    elif backend_string.lower() == 'mongo':
+    elif backend_string.lower() == 'sqlite':
+        backend_kwargs = {}
+        for conf_kwarg in ['filepath']:
+            backend_kwargs[conf_kwarg] = config['SQLiteBackend'][conf_kwarg]
+	return SQLiteBackend(**backend_kwargs)
 
+    elif backend_string.lower() == 'mongo':
         backend_kwargs = {}
         for conf_kwarg in ['host', 'port', 'db',
                            'dagobah_collection', 'job_collection',
                            'log_collection']:
             backend_kwargs[conf_kwarg] = config['MongoBackend'][conf_kwarg]
-
         backend_kwargs['port'] = int(backend_kwargs['port'])
         return MongoBackend(**backend_kwargs)
 
