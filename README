@@ -22,12 +22,20 @@ Dagobah does not require a backend, but unless you specify one, your jobs and ta
 
 ## Configuration
 
-## Planned Features
+## Known Issues and Planned Features
+
+### Known Issues
+
+  * Retrying a failed job after renaming one of its tasks results in an error
+
+### Planned Features
 
   * Improved task detail pages
   * Advanced task-level configuration, e.g. timeouts
   * CLI
 
-## Author
+## Contributors
+
+### Author
 
  * [Travis Thieman](https://twitter.com/thieman)

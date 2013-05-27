@@ -13,17 +13,21 @@ from dagobah.backend.sqlite import SQLiteBackend
 from dagobah.backend.mongo import MongoBackend
 
 app = Flask(__name__)
-APP_PORT = 9000
+
+location = os.path.realpath(os.path.join(os.getcwd(),
+                                         os.path.dirname(__file__)))
+
+config_file = open(os.path.join(location, 'dagobahd.yaml'))
+config = yaml.load(config_file.read())
+config_file.close()
+
+
+def configure_app():
+    app.config['APP_HOST'] = config['Dagobahd']['host']
+    app.config['APP_PORT'] = config['Dagobahd']['port']
 
 
 def init_dagobah(testing=False):
-
-    location = os.path.realpath(os.path.join(os.getcwd(),
-                                             os.path.dirname(__file__)))
-
-    config_file = open(os.path.join(location, 'dagobahd.yaml'))
-    config = yaml.load(config_file.read())
-    config_file.close()
 
     init_logger(location, config)
 
@@ -135,3 +139,4 @@ def favicon_redirect():
 
 dagobah = init_dagobah()
 app.config['dagobah'] = dagobah
+configure_app()
