@@ -10,11 +10,11 @@ A simple dependency-based job scheduler written in Python.
 
 Dagobah does not require a backend, but unless you specify one, your jobs and tasks will be lost when the daemon exists. Each backend requires its own set of drivers. Once you've installed the drivers, you then need to specify any backend-specific options in the config. See "Configuration" below for details. The following backends are available:
 
-### SQLite
+#### SQLite
 
      pip install pysqlite sqlalchemy
 
-### MongoDB
+#### MongoDB
 
     pip install pymongo
 
@@ -22,13 +22,13 @@ Dagobah does not require a backend, but unless you specify one, your jobs and ta
 
 ## Configuration
 
-## Known Issues and Planned Features
+## Other Information
 
-### Known Issues
+#### Known Issues
 
   * Retrying a failed job after renaming one of its tasks results in an error
 
-### Planned Features
+#### Planned Features
 
   * Improved task detail pages
   * Advanced task-level configuration, e.g. timeouts
@@ -36,6 +36,6 @@ Dagobah does not require a backend, but unless you specify one, your jobs and ta
 
 ## Contributors
 
-### Author
+#### Author
 
  * [Travis Thieman](https://twitter.com/thieman)

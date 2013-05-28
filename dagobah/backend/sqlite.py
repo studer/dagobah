@@ -49,17 +49,17 @@ class SQLiteBackend(BaseBackend):
 
     def get_new_dagobah_id(self):
         count = self.session.query(sqlalchemy.func.max(Dagobah.id)).scalar()
-        return max(count, 1) + 1
+        return max(count, 0) + 1
 
 
     def get_new_job_id(self):
         count = self.session.query(sqlalchemy.func.max(DagobahJob.id)).scalar()
-        return max(count, 1) + 1
+        return max(count, 0) + 1
 
 
     def get_new_log_id(self):
         count = self.session.query(sqlalchemy.func.max(DagobahLog.id)).scalar()
-        return max(count, 1) + 1
+        return max(count, 0) + 1
 
 
     def get_dagobah_json(self, dagobah_id):
@@ -183,9 +183,7 @@ class SQLiteBackend(BaseBackend):
 
     def get_latest_run_log(self, job_id, task_name):
         log = self.session.query(DagobahLog).\
-            join(DagobahLog.tasks).\
-            filter(DagobahLog.job_id==job_id).\
-            filter(DagobahLogTask.name == task_name).\
+            filter_by(job_id=job_id).\
             order_by(DagobahLog.save_date.desc()).\
             first()
         return log.json

@@ -17,9 +17,55 @@ app = Flask(__name__)
 location = os.path.realpath(os.path.join(os.getcwd(),
                                          os.path.dirname(__file__)))
 
-config_file = open(os.path.join(location, 'dagobahd.yaml'))
-config = yaml.load(config_file.read())
-config_file.close()
+def get_config_file():
+    """ Return the loaded config file if one exists. """
+
+    # config will be created here if we can't find one
+    new_config_path = os.path.expanduser('~/.dagobahd.yml')
+
+    config_dirs = ['/etc',
+                   os.path.expanduser('~')]
+    config_filenames = ['dagobahd.yml',
+                        'dagobahd.yaml',
+                        '.dagobahd.yml',
+                        '.dagobahd.yaml']
+
+    for directory in config_dirs:
+        for filename in config_filenames:
+            try:
+                if os.path.isfile(os.path.join(directory, filename)):
+                    to_load = open(os.path.join(directory, filename))
+                    config = yaml.load(to_load.read())
+                    to_load.close()
+                    return config
+            except:
+                pass
+
+    # if we made it to here, need to create a config file
+    logging.info('Creating new config file in home directory')
+    new_config = open(new_config_path, 'w')
+    new_config.write(return_standard_conf())
+    new_config.close()
+
+    new_config = open(new_config_path, 'r')
+    config = yaml.load(new_config.read())
+    new_config.close()
+    return config
+
+
+def print_standard_conf():
+    """ Print the sample config file to stdout. """
+    config_file = open(os.path.join(location, 'dagobahd.yml'))
+    print config_file.read()
+    config_file.close()
+
+
+def return_standard_conf():
+    """ Return the sample config file. """
+    config_file = open(os.path.join(location, 'dagobahd.yml'))
+    result = config_file.read()
+    config_file.close()
+    return result
 
 
 def configure_app():
@@ -100,6 +146,7 @@ def init_logger(location, config):
 
     logging.basicConfig(filename=path, level=numeric_level)
 
+    print 'Logging output to %s' % path
     logging.info('Logger initialized at level %s' % level_string)
 
 
@@ -137,6 +184,7 @@ def favicon_redirect():
                                mimetype='image/vnd.microsoft.icon')
 
 
+config = get_config_file()
 dagobah = init_dagobah()
 app.config['dagobah'] = dagobah
 configure_app()

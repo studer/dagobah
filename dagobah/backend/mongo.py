@@ -94,7 +94,7 @@ class MongoBackend(BaseBackend):
         for job in rec.get('jobs', []):
             if 'job_id' in job:
                 self.delete_job(job['job_id'])
-        self.dagobah_log.remove({'parent_id': dagobah_id})
+        self.log_coll.remove({'parent_id': dagobah_id})
         self.dagobah_coll.remove({'_id': dagobah_id})
 
 
