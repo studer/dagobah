@@ -8,6 +8,8 @@ Dagobah is a simple dependency-based job scheduler written in Python. Dagobah al
 Dagobah lets you retry individual tasks from failure, sends you helpful email reports on job completion and failure, keeps track of your tasks's stdout and stderr, and persists its information in various backends so you don't have to worry about losing your data.
 
 ## Installation
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fstuder%2Fdagobah.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fstuder%2Fdagobah?ref=badge_shield)
+
 
     pip install dagobah
     dagobahd  # start the web interface on localhost:9000
@@ -65,3 +67,7 @@ To use a backend, you need to install the drivers using the commands and then te
 #### Contributors
 
  * This could be you! If you have any questions, go ahead and [email](mailto:travis.thieman@gmail.com) or [tweet at](https://twitter.com/thieman) me, or go ahead and create a new issue in this repository.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fstuder%2Fdagobah.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fstuder%2Fdagobah?ref=badge_large)
